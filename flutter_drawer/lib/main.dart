@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_drawer/screens/photos_list.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 void main() => runApp(MyApp());
 
@@ -27,19 +30,38 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  File selectedImage;
+
+  void selectImage() async{
+    File selImg = await ImagePicker.pickImage(source: ImageSource.gallery);
+    print('selePath ------ :  ${selImg.path}');
+    selectedImage = selImg;
+    setState(() {
+    });
+  }
+
+  showCapturedImage() async{
+    File selImg = await ImagePicker.pickImage(source: ImageSource.camera);
+    print('selePath :  ${selImg.path}');
+    selectedImage = selImg;
+    setState(() {
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        backgroundColor: Color.fromRGBO(50, 60, 80, 1.0),
+        //backgroundColor: Color.fromRGBO(50, 60, 80, 1.0),
+        backgroundColor: Colors.redAccent,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            new Text("This drawer example.", style: TextStyle(color: Colors.black, fontSize: 30))
+            selectedImage != null ? new Image.file(selectedImage, fit: BoxFit.fill,) : new Text("No image selected.")
           ],
         ),
       ),
@@ -54,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
               currentAccountPicture: Image.asset('images/profile.jpg'),
               decoration: BoxDecoration(
                 color: Colors.redAccent,
-                borderRadius: BorderRadius.circular(10.0)
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10))
               ),
             ),
             ListTile(
@@ -62,6 +84,9 @@ class _MyHomePageState extends State<MyHomePage> {
               title: Text('Photos'),
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PhotosListing()));
+                  //ImagePicker.pickImage(source: ImageSource.gallery);
+                  //selectImage();
                 }
             ),
             Divider(
@@ -98,10 +123,22 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 2.0,
             ),
             ListTile(
+                leading: Icon(Icons.photo_camera),
+                title: Text('Camera'),
+                onTap: () {
+                  Navigator.pop(context);
+                  showCapturedImage();
+                }
+            ),
+            Divider(
+              height: 2.0,
+            ),
+            ListTile(
               leading: Icon(Icons.message),
               title: Text('Messages'),
                 onTap: () {
                   Navigator.pop(context);
+                  selectImage();
                 }
             ),
             Divider(
